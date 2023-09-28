@@ -67,7 +67,8 @@ For an example of using `JuMP.jl` to solve linear programs, see [the relevant tu
 
 Your task is to decide how much lumber to produce to maximize profit from wood sales. You can purchase wood from a managed forest, which consists of spruce (320,000 bf) and fir (720,000 bf). Spruce costs \$0.12 per bf to purchase and fir costs \$0.08 per bf.
 
-At the lumber mill, wood can be turned into plywood of various grades (see the table for how much wood of each type is required for and the revenue from each grade).
+At the lumber mill, wood can be turned into plywood of various grades (see @tbl-inputs for how much wood of each type is required for and the revenue from each grade). Any excess wood is sent to be recycled into particle board. This resource allocation problem is diagrammed in @fig-schematic.
+
 
 | Plywood Grade | Inputs (bf/bf plywood) | Revenue (\$/1000 bf) |
 |:-------------:|:----------------------:|:--------------------:|
@@ -75,19 +76,20 @@ At the lumber mill, wood can be turned into plywood of various grades (see the t
 |       2       |   1.0 (S) + 2.0 (F)    |         520          |
 |       3       |   1.5 (S) + 2.0 (F)    |         700          |
 
-Any excess wood is sent to be recycled into particle board, which can be sold for a net revenue of \$0.03 per bf. This is summarized in the figure below.
+: Wood inputs and revenue by plywood grade. S refers to spruce inputs, F fir inputs. {#tbl-inputs}
+
 :::
 
 ```{mermaid}
-%%| fig-width: 6.5
+%%| label: fig-schematic
+%%| fig-cap: "Flowchat of the resource allocation problem in this lab."
+
 flowchart LR
     A[Spruce] -- $0.12 per bf --> C{Lumber Mill}
     B[Fir] -- $0.08 per bf --> C
     C --> P(Plywood)
     C -- Wood Excess --> D{Recycle}
-    D --> E(Particle Board)
-    E -- $0.03 per bf net --> S[Sell]
-    P -- Price depends on grade --> S
+    P -- Price depends on grade --> S[Sell]
 ```
 
 ## Problems (10 points)
