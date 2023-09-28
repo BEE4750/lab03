@@ -4,6 +4,8 @@ format:
     html:        
         warning: true
         error: true
+        mermaid:
+            theme: forest
     ipynb:
         warning: true
         error: true
@@ -77,6 +79,7 @@ Any excess wood is sent to be recycled into particle board, which can be sold fo
 :::
 
 ```{mermaid}
+%%| fig-width: 6.5
 flowchart LR
     A[Spruce] -- $0.12 per bf --> C{Lumber Mill}
     B[Fir] -- $0.08 per bf --> C
