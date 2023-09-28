@@ -60,6 +60,8 @@ using Plots # plotting
 In this lab, you will write and solve a resource allocation example using `JuMP.jl`. `JuMP.jl` provides an intuitive syntax for writing, solving, and querying optimization problems.
 
 For an example of using `JuMP.jl` to solve linear programs, see [the relevant tutorial on the class website](https://viveks.me/environmental-systems-analysis/tutorials/julia-jump.html).
+
+Free free to delete some of the illustrative cells and code blocks in your notebook as you go through and solve the lab problems...this might help reduce some potential confusion while grading about what your answer is.
 :::
 
 ::: {.cell .markdown}
@@ -244,7 +246,7 @@ shadow_price(constraint1) # this is why we named the constraints when we defined
 ::: {.cell .markdown}
 #### Problem 2.4 (1 point)
 
-Would you prefer to have 1,000 additional bf of spruce or 2,000 additional bf of fir?
+Would you prefer to have 2,000 additional bf of spruce or 1,000 additional bf of fir?
 :::
 
 ## References
