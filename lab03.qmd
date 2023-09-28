@@ -1,0 +1,247 @@
+---
+title: "BEE 4750 Lab 3: Linear Programming with JuMP"
+format:
+    html:        
+        warning: true
+        error: true
+    ipynb:
+        warning: true
+        error: true
+        code-annotation: below
+jupyter: julia-1.9
+format-links: []
+---
+
+::: {.content-visible when-format="ipynb"}
+**Name**:
+
+**ID**:
+:::
+
+::: {.callout-important icon="false"}
+### Due Date
+
+Friday, 10/13/23, 9:00pm
+:::
+
+::: {.content-visible when-format="html"}
+::: callout-caution
+If you are enrolled in the course, make sure that you use the GitHub Classroom link provided in Ed Discussion, or you may not be able to get help if you run into problems.
+
+Otherwise, you can [find the Github repository here](%7B%7B%3C%20var%20github_org.repo%20%3E%7D%7D/lab03).
+:::
+:::
+
+## Setup
+
+The following code should go at the top of most Julia scripts; it will load the local package environment and install any needed packages. You will see this often and shouldn't need to touch it.
+
+```{julia}
+#| output: false
+
+import Pkg
+Pkg.activate(".")
+Pkg.instantiate()
+```
+
+```{julia}
+#| output: false
+
+using JuMP # optimization modeling syntax
+using HiGHS # optimization solver
+using Plots # plotting
+```
+
+::: {.cell .markdown}
+## Overview
+
+In this lab, you will write and solve a resource allocation example using `JuMP.jl`. `JuMP.jl` provides an intuitive syntax for writing, solving, and querying optimization problems.
+
+For an example of using `JuMP.jl` to solve linear programs, see [the relevant tutorial on the class website](https://viveks.me/environmental-systems-analysis/tutorials/julia-jump.html).
+:::
+
+::: {.cell .markdown}
+## Introduction
+
+Your task is to decide how much lumber to produce to maximize profit from wood sales. You can purchase wood from a managed forest, which consists of spruce (320,000 bf) and fir (720,000 bf). Spruce costs \$0.12 per bf to purchase and fir costs \$0.08 per bf.
+
+At the lumber mill, wood can be turned into plywood of various grades (see the table for how much wood of each type is required for and the revenue from each grade).
+
+| Plywood Grade | Inputs (bf/bf plywood) | Revenue (\$/1000 bf) |
+|:-------------:|:----------------------:|:--------------------:|
+|       1       |   0.5 (S) + 1.5 (F)    |         400          |
+|       2       |   1.0 (S) + 2.0 (F)    |         520          |
+|       3       |   1.5 (S) + 2.0 (F)    |         700          |
+
+Any excess wood is sent to be recycled into particle board, which can be sold for a net revenue of \$0.03 per bf. This is summarized in the figure below.
+:::
+
+```{mermaid}
+flowchart LR
+    A[Spruce] -- $0.12 per bf --> C{Lumber Mill}
+    B[Fir] -- $0.08 per bf --> C
+    C --> P(Plywood)
+    C -- Wood Excess --> D{Recycle}
+    D --> E(Particle Board)
+    E -- $0.03 per bf net --> S[Sell]
+    P -- Price depends on grade --> S
+```
+
+## Problems (10 points)
+
+::: {.cell .markdown}
+### Problem 1: Problem Formulation (5 points)
+
+In this problem, you will go through the steps of formulating a linear program for this problem.
+:::
+
+::: {.cell .markdown}
+#### Problem 1.1 (1 point)
+
+What are your decision variables? Clearly define your notation, including what variables you are using, what they mean, and what their units are.
+:::
+
+::: {.cell .markdown}
+#### Problem 1.2 (1 point)
+
+Derive your objective function. Support your function with justifications and/or equations as necessary. You will not receive credit just for the function alone.
+:::
+
+::: {.cell .markdown}
+#### Problem 1.3 (2 point)
+
+Derive any needed constraints. Support your function with justifications and/or equations as necessary. You will not receive credit just for the final constraints alone.
+:::
+
+::: {.cell .markdown}
+#### Problem 1.4 (1 point)
+
+Put the linear program into standard form. For an example of the syntax for this, see lines 82--91 [here](https://github.com/vsrikrish/environmental-systems-analysis/blob/Fall23/tutorials/julia-jump.qmd).
+:::
+
+### Problem 2: Find the Solution (5 points)
+
+::: {.cell .markdown}
+#### Problem 2.1 (2 points)
+
+Code your linear program using `JuMP`. Feel free to consult [the website's `JuMP` tutorial](https://viveks.me/environmental-systems-analysis/tutorials/julia-jump.html) for syntax help. The keys:
+:::
+
+1.  Initialize your model with a solver; in this case, we'll use the `HiGHS` solver, but there are other solvers listed here for different types of problems, some of which are open and some of which require a commercial license: <https://jump.dev/JuMP.jl/stable/installation/#Supported-solvers>:
+
+    ```{julia}    
+    #| output: false
+    example_model = Model(HiGHS.Optimizer)
+    ```
+
+2.  Define variables with syntax like
+
+    ```{julia}
+    #| output: false
+    @variable(example_model, 1 >= example_x >= 0)
+    ```
+
+    This will create a variable `example_x` which is constrained to be between 0 and 1; you can leave off any of the bounds if a variable is unbounded in a particular direction. You can also add a vector of variables:
+
+    ```{julia}
+    #| output: false
+    T = 1:3 # define set to index variables
+    @variable(example_model, 1 >= example_z[t in T] >= 0)
+    ```
+
+    which will create a vector of 3 variables `example_z[1]`, ..., `example_z[3]`, all of which are bounded between 0 and 1.
+
+3.  Add an objective with
+
+    ```{julia}
+    #| output: false
+    @objective(example_model, Max, example_x + sum(example_z))
+    ```
+
+    which will add an objective to maximize (replace with `Min` to minimize).
+
+4.  Add constraints:
+
+    ```{julia}
+    #| output: false
+    @constraint(example_model, constraint1, 2example_x + 3*sum(example_z) <= 10)
+    @constraint(example_model, constraint2, 5example_x - example_z[1] <= 2)
+    ```
+
+    which will name the constraints `constraint1` and `constraint2` (you should make yours more descriptive about what the constraint actually is). The value of adding a name is to facilitate later querying of shadow prices, which we will discuss later. You can also add a vector of constraints which have similar structure or rely on different elements of a data vector:
+
+    ```{julia}
+    #| output: false
+    A = [2; 4]
+    b = [8; 12]
+    I = 1:2 # set indices for constraint
+    @constraint(example_model, vector_constraint[i in I], A[i] * sum(example_z) .<= b[i])
+    ```
+
+    You can also define matrices of constraints which depend on two index sets by generalizing this syntax, e.g.
+
+    ``` julia
+    @constraint(example_model, matrix_constraint[i in I, j in J, ...])
+    ```
+
+    ::: {.callout-tip} 
+    Specifying higher-dimensional vectors and matrices of variables and constraints will be important when we start looking at more complex applications, so don't skip over this! You don't want to manually enter thousands of constraints to ensure hourly electricity demand is met... 
+    :::
+
+    Finally, you can (and probably should) `print` your model to make sure that you get something that looks like the equations that you wrote down (in a notebook, this will be nicely rendered):
+
+    ```{julia}
+    print(example_model)
+    ```
+
+    ::: {.callout-tip} 
+    ## Define your entire model in one cell
+
+    `JuMP` has great and intuitive syntax, but it doesn't like re-defining variables or constraints once they've been set. I recommend putting all of your model-definition code (starting from `model = Model(...)`) for a particular optimization problem in a single notebook cell, so you can re-set up the entire problem with a single click when you want to make a change. 
+    :::
+
+::: {.cell .markdown}
+#### Problem 2.2 (1 points)
+
+Find the solution to your program and find the optimal values of the decision variables. Once you've defined your model, you can find the solution with \`optimize!():
+:::
+
+```{julia}
+optimize!(example_model)
+```
+
+::: callout-note
+## What if I Get An Error?
+
+If `optimize!()` throws an error, that's usually a sign that something is wrong with the formulation (for example, a variable might not be bounded or a constraint might not be specified correctly) or a typo in the model definition. Linear programs should be well behaved!
+:::
+
+To find the values of variables after optimizing, use `value.()` (the broadcasting ensures this will work for vector-valued variables as well):
+
+```{julia}
+value.(example_x)
+```
+
+```{julia}
+value.(example_z)
+```
+
+::: {.cell .markdown}
+### Problem 2.3 (1 point)
+
+How would your profit change if you could buy 1,000 additional bf of spruce? You can answer this by getting the shadow price of a particular variable with:
+:::
+
+```{julia}
+shadow_price(constraint1) # this is why we named the constraints when we defined them
+```
+
+::: {.cell .markdown}
+#### Problem 2.4 (1 point)
+
+Would you prefer to have 1,000 additional bf of spruce or 2,000 additional bf of fir?
+:::
+
+## References
+
+Put any consulted sources here, including classmates you worked with/who helped you.
