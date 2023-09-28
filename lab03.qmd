@@ -234,7 +234,7 @@ value.(example_z)
 ```
 
 ::: {.cell .markdown}
-### Problem 2.3 (1 point)
+#### Problem 2.3 (1 point)
 
 How would your profit change if you could buy 1,000 additional bf of spruce? You can answer this by getting the shadow price of a particular variable with:
 :::
