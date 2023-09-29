@@ -123,7 +123,7 @@ Derive any needed constraints. Support your function with justifications and/or 
 ::: {.cell .markdown}
 #### Problem 1.4 (1 point)
 
-Put the linear program into standard form. For an example of the syntax for this, see lines 82--91 [here](https://github.com/vsrikrish/environmental-systems-analysis/blob/Fall23/tutorials/julia-jump.qmd).
+Put this optimization problem in mathematical programming form. For an example of the syntax for this, see lines 82--91 [here](https://github.com/vsrikrish/environmental-systems-analysis/blob/Fall23/tutorials/julia-jump.qmd).
 :::
 
 ### Problem 2: Find the Solution (5 points)
