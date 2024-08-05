@@ -170,6 +170,11 @@ Make sure to:
 * Derive your objective function. Support your function with justifications and/or equations as necessary. 
 * Derive any needed constraints. Support your function with justifications and/or equations as necessary. 
 * Put this optimization problem in mathematical programming form. For an example of the syntax for this in a notebook (or other LaTeX-based formatting), see lines 82--91 [here](https://github.com/vsrikrish/environmental-systems-analysis/blob/Fall24/tutorials/julia-jump.qmd).
+
+**Extra**:
+
+You may not have time to complete this part of the lab before submitting, but since the problem is relatively simple, these steps might be worth returning to as you work on the linear programming homework.
+
 * Code your linear program using `JuMP`. 
 * Find the solution to your program and find the optimal values of the decision variables. Once you've defined your model, you can find the solution with `optimize!()`:
   ```{julia}
@@ -188,6 +193,10 @@ Make sure to:
   ```{julia}
   value.(example_z)
   ```
+* Find the shadow price of the spruce constraint; remember that this is the change to profit from every additional unit of spruce that becomes available. You can get the shadow price of a constraint with the following syntax:
+```{julia}
+shadow_price(constraint1) # this is why we named the constraints when we defined them
+```
 
 ## References
 
