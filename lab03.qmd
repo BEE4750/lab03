@@ -71,7 +71,7 @@ In this lab we will walk through the steps involved in coding a linear program i
 
 ## Exercise (3 points)
 
-Your task is to decide how much lumber to produce to maximize profit from wood sales. You can purchase wood from a managed forest, which consists of spruce (320,000 bf) and fir (720,000 bf). Spruce costs \$0.12 per bf to purchase and fir costs \$0.08 per bf.
+Your task is to decide how much lumber to produce to maximize profit from wood sales. You can purchase wood from a managed forest, which consists of spruce (320,000 bf) and fir (720,000 bf). Spruce costs $\$0.12$ per bf to purchase and fir costs $\$0.08$ per bf.
 
 At the lumber mill, wood can be turned into plywood of various grades (see @tbl-inputs for how much wood of each type is required for and the revenue from each grade). Any excess wood is sent to be recycled into particle board, which yields no revenue for the mill. 
 
