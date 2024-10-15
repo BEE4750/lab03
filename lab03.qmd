@@ -86,7 +86,7 @@ At the lumber mill, wood can be turned into plywood of various grades (see @tbl-
 
 
 
-First, we need to identify our decision variables. While there are several options, we will use $G_i$, the amount of each grade the mill produces (in \$/1000 bf). 
+First, we need to identify our decision variables. While there are several options, we will use $G_i$, the amount of each grade the mill produces (in 1000 bf). 
 
 Using these decision variables, formulate a linear program to maximize the profit of the mill subject to the supply constraints on spruce and fir.
 
